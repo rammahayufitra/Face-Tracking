@@ -1,6 +1,8 @@
 import cv2 
+from components.detector import Detector
+from components.bbox import BBOX
+from components.draw import Draw
 
-face_detector = cv2.CascadeClassifier('./weights/cascade.xml')
 
 def streaming():
     cap = cv2.VideoCapture(0)
@@ -11,10 +13,10 @@ def streaming():
     while cap.isOpened():
         ret, frame = cap.read()
         try:
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            results = face_detector.detectMultiScale(gray, 1.3, 5)
-            for (x,y,w,h) in results:
-                cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
+            results = Detector(frame)
+            for object in results:
+                box = BBOX(object)
+            Draw(frame, box)
             cv2.imshow("webcam", frame)
             if cv2.waitKey(1) == 27:
                 break
